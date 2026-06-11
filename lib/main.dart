@@ -14,7 +14,7 @@ void main() async {
   await Permission.microphone.request();
   
   // Initialize database
-  await DatabaseHelper.instance.initDb();
+  await DatabaseHelper.instance.database;
   
   runApp(const MyApp());
 }
