@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,8 +16,10 @@ void main() async {
   // No-op on mobile/desktop; on web this swaps in sqflite_common_ffi_web.
   await initDatabaseFactory();
 
-  // Request microphone permission
-  await Permission.microphone.request();
+  // Request microphone permission (skipping on Web to prevent crash)
+  if (!kIsWeb) {
+    await Permission.microphone.request();
+  }
 
   // Initialize database (the `database` getter triggers _initDB on first access)
   await DatabaseHelper.instance.database;
