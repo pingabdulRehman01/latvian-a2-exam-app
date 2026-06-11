@@ -12,17 +12,28 @@ import 'screens/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Configure the sqflite database factory for the current platform.
-  // No-op on mobile/desktop; on web this swaps in sqflite_common_ffi_web.
-  await initDatabaseFactory();
+  try {
+    debugPrint("App initialization started...");
+    // Configure the sqflite database factory for the current platform.
+    // No-op on mobile/desktop; on web this swaps in sqflite_common_ffi_web.
+    await initDatabaseFactory();
+    debugPrint("Database factory initialized.");
 
-  // Request microphone permission (skipping on Web to prevent crash)
-  if (!kIsWeb) {
-    await Permission.microphone.request();
+    // Request microphone permission (skipping on Web to prevent crash)
+    if (!kIsWeb) {
+      debugPrint("Requesting microphone permission...");
+      await Permission.microphone.request();
+      debugPrint("Microphone permission requested.");
+    }
+
+    // Initialize database (the `database` getter triggers _initDB on first access)
+    debugPrint("Initializing database...");
+    await DatabaseHelper.instance.database;
+    debugPrint("Database initialized successfully.");
+  } catch (e, stack) {
+    debugPrint("ERROR during initialization: $e");
+    debugPrint(stack.toString());
   }
-
-  // Initialize database (the `database` getter triggers _initDB on first access)
-  await DatabaseHelper.instance.database;
 
   runApp(const MyApp());
 }
