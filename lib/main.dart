@@ -14,19 +14,15 @@ void main() async {
 
   try {
     debugPrint("App initialization started...");
-    // Configure the sqflite database factory for the current platform.
-    // No-op on mobile/desktop; on web this swaps in sqflite_common_ffi_web.
     await initDatabaseFactory();
     debugPrint("Database factory initialized.");
 
-    // Request microphone permission (skipping on Web to prevent crash)
     if (!kIsWeb) {
       debugPrint("Requesting microphone permission...");
       await Permission.microphone.request();
       debugPrint("Microphone permission requested.");
     }
 
-    // Initialize database (the `database` getter triggers _initDB on first access)
     debugPrint("Initializing database...");
     await DatabaseHelper.instance.database;
     debugPrint("Database initialized successfully.");
@@ -39,7 +35,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +46,53 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MistakeProvider()),
       ],
       child: MaterialApp(
-        title: 'Latvian A2 Exam',
+        title: 'Latvian A2',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
           useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF5E5CE6),
+            brightness: Brightness.light,
+            primary: const Color(0xFF5E5CE6),
+            secondary: const Color(0xFF30D158),
+            surface: Colors.white,
+          ),
+          scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+          fontFamily: 'SF Pro Display',
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            titleTextStyle: TextStyle(
+              color: Color(0xFF1C1C1E),
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
+            iconTheme: IconThemeData(color: Color(0xFF5E5CE6)),
+          ),
+          cardTheme: CardThemeData(
+            color: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFFE5E5EA), width: 1),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF5E5CE6),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
         ),
         home: const HomeScreen(),
       ),

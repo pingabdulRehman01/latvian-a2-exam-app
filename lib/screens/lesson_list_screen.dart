@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/lesson_provider.dart';
 import 'practice_screen.dart';
+import 'home_screen.dart' show kPrimary, kSuccess, kBackground, kCard, kBorder, kTextDark, kTextGrey;
 
 class LessonListScreen extends StatefulWidget {
-  const LessonListScreen({Key? key}) : super(key: key);
+  const LessonListScreen({super.key});
 
   @override
   State<LessonListScreen> createState() => _LessonListScreenState();
@@ -20,77 +21,155 @@ class _LessonListScreenState extends State<LessonListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackground,
       appBar: AppBar(
-        title: const Text('Select a Lesson'),
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: const Text('Choose a Lesson'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: kPrimary, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: kBorder),
+        ),
       ),
       body: Consumer<LessonProvider>(
-        builder: (context, lessonProvider, child) {
+        builder: (context, lessonProvider, _) {
           if (lessonProvider.lessons.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimary),
+              ),
             );
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             itemCount: lessonProvider.lessons.length,
             itemBuilder: (context, index) {
               final lesson = lessonProvider.lessons[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              final isCompleted = lesson.isCompleted;
+
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PracticeScreen(
+                      lessonId: lesson.id,
+                      lessonTitle: lesson.title,
+                    ),
+                  ),
                 ),
-                elevation: 2,
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16),
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue,
-                    child: Text(
-                      '${lesson.dayNumber}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: kCard,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isCompleted
+                          ? kSuccess.withValues(alpha: 0.4)
+                          : kBorder,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
+                    ],
                   ),
-                  title: Text(
-                    lesson.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  subtitle: Text(
-                    lesson.topic,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
-                  trailing: lesson.isCompleted
-                      ? const Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 28,
-                        )
-                      : const Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey,
-                          size: 16,
+                  child: Row(
+                    children: [
+                      // Day badge
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: isCompleted
+                              ? kSuccess.withValues(alpha: 0.12)
+                              : kPrimary.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PracticeScreen(
-                          lessonId: lesson.id,
-                          lessonTitle: lesson.title,
+                        child: isCompleted
+                            ? const Icon(Icons.check_rounded,
+                                color: kSuccess, size: 26)
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${lesson.dayNumber}',
+                                    style: const TextStyle(
+                                      color: kPrimary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Lesson info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              lesson.title,
+                              style: const TextStyle(
+                                color: kTextDark,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.record_voice_over_rounded,
+                                    size: 13, color: kTextGrey),
+                                const SizedBox(width: 4),
+                                Text(
+                                  lesson.topic,
+                                  style: const TextStyle(
+                                    color: kTextGrey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (isCompleted) ...[
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: kSuccess.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Text(
+                                  'Completed ✓',
+                                  style: TextStyle(
+                                    color: kSuccess,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                    );
-                  },
+                      // Arrow
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: isCompleted ? kSuccess : kPrimary,
+                        size: 24,
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
