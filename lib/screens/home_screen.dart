@@ -3,19 +3,9 @@ import 'package:provider/provider.dart';
 import '../providers/lesson_provider.dart';
 import '../providers/mistake_provider.dart';
 import '../services/progress_service.dart';
+import '../app_theme.dart';
 import 'lesson_list_screen.dart';
 import 'mistake_review_screen.dart';
-
-// App-wide design tokens
-const kPrimary = Color(0xFF5E5CE6);
-const kSuccess = Color(0xFF30D158);
-const kAccent = Color(0xFFFFD60A);
-const kDanger = Color(0xFFFF453A);
-const kBackground = Color(0xFFF9FAFB);
-const kCard = Colors.white;
-const kBorder = Color(0xFFE5E5EA);
-const kTextDark = Color(0xFF1C1C1E);
-const kTextGrey = Color(0xFF8E8E93);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

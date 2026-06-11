@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/lesson_provider.dart';
+import '../app_theme.dart';
 import 'practice_screen.dart';
-import 'home_screen.dart' show kPrimary, kSuccess, kBackground, kCard, kBorder, kTextDark, kTextGrey;
 
 class LessonListScreen extends StatefulWidget {
   const LessonListScreen({super.key});
