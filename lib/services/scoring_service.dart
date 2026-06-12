@@ -20,8 +20,14 @@ class ScoringService {
     // Calculate score based on matches and total target words
     if (targetWords.isEmpty) return 0;
     
-    final score = (matchCount / targetWords.length * 100).toInt();
-    return score.clamp(0, 100);
+    // Penalize for missing words or wrong length ratio
+    final lengthRatio = userWords.length / targetWords.length;
+    final scoreraw = (matchCount / targetWords.length * 100).toInt();
+    int penalty = 0;
+    if (lengthRatio < 0.5) penalty = 20;
+    else if (lengthRatio < 0.75) penalty = 10;
+    final score = (scoreraw - penalty).clamp(0, 100);
+    return score;
   }
 
   /// Get feedback based on score
@@ -82,12 +88,12 @@ class ScoringService {
     return feedback.trim();
   }
 
-  /// Normalize text for comparison
+  /// Normalize text for comparison, preserving Latvian diacritics
   static String _normalize(String text) {
     return text
         .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9\s]'), '') // Remove special characters
-        .replaceAll(RegExp(r'\s+'), ' ') // Replace multiple spaces with single space
+        .replaceAll(RegExp(r'[^a-z0-9āčēģīķļņšūž\s]'), '') // Keep Latvian chars
+        .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
   }
 }

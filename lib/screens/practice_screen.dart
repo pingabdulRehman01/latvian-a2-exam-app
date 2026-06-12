@@ -6,6 +6,7 @@ import '../providers/lesson_provider.dart';
 import '../providers/practice_provider.dart';
 import '../services/speech_service.dart';
 import '../services/scoring_service.dart';
+import '../app_theme.dart';
 
 class PracticeScreen extends StatefulWidget {
   final int lessonId;
@@ -151,10 +152,43 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return Consumer2<LessonProvider, PracticeProvider>(
       builder: (context, lessonProvider, practiceProvider, child) {
         if (lessonProvider.currentPhrases.isEmpty) {
+          if (lessonProvider.errorMessage != null) {
+            return Scaffold(
+              backgroundColor: kBackground,
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline_rounded, color: kDanger, size: 56),
+                      const SizedBox(height: 16),
+                      Text(
+                        lessonProvider.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: kTextDark, fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: () => _loadPhrases(),
+                        icon: const Icon(Icons.refresh, color: Colors.white),
+                        label: const Text('RETRY', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kPrimary,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5E5CE6)),
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimary),
               ),
             ),
           );
@@ -187,7 +221,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
         final progress = phrases.isEmpty ? 0.0 : currentIndex / phrases.length;
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF9FAFB),
+          backgroundColor: kBackground,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +233,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     children: [
                       // Exit
                       IconButton(
-                        icon: const Icon(Icons.close, color: Color(0xFF1C1C1E), size: 28),
+                        icon: const Icon(Icons.close, color: kTextDark, size: 28),
                         onPressed: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 8),
@@ -208,7 +242,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                         child: Container(
                           height: 12,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE5E5EA),
+                            color: kBorder,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Stack(
@@ -217,7 +251,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                 widthFactor: progress,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF5E5CE6),
+                                    color: kPrimary,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                 ),
@@ -231,19 +265,19 @@ class _PracticeScreenState extends State<PracticeScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFD60A).withOpacity(0.15),
+                          color: kAccent.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFFFD60A), width: 1),
+                          border: Border.all(color: kAccent, width: 1),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.local_fire_department, color: Color(0xFFFFD60A), size: 16),
+                            Icon(Icons.local_fire_department, color: kAccent, size: 16),
                             SizedBox(width: 4),
                             Text(
                               '+3 Days',
                               style: TextStyle(
-                                color: Color(0xFF1C1C1E),
+                                color: kTextDark,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -256,19 +290,19 @@ class _PracticeScreenState extends State<PracticeScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF453A).withOpacity(0.15),
+                          color: kDanger.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFFF453A), width: 1),
+                          border: Border.all(color: kDanger, width: 1),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.favorite, color: Color(0xFFFF453A), size: 16),
+                            const Icon(Icons.favorite, color: kDanger, size: 16),
                             const SizedBox(width: 4),
                             Text(
                               '$_lives',
                               style: const TextStyle(
-                                color: Color(0xFF1C1C1E),
+                                color: kTextDark,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -312,9 +346,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                     Text(
                                       currentPhrase.phraseEn,
                                       style: const TextStyle(
-                                        color: Color(0xFF1C1C1E),
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                      color: kTextDark,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -335,15 +369,15 @@ class _PracticeScreenState extends State<PracticeScreen> {
                             constraints: const BoxConstraints(minHeight: 120),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: kCard,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFE5E5EA),
+                                color: kBorder,
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.02),
+                                  color: Colors.black.withValues(alpha: 0.02),
                                   blurRadius: 6,
                                   offset: const Offset(0, 3),
                                 ),
@@ -422,14 +456,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: practiceProvider.isRecording
-                                          ? const Color(0xFFFF453A)
-                                          : const Color(0xFF5E5CE6),
+                                          ? kDanger
+                                          : kPrimary,
                                       boxShadow: [
                                         BoxShadow(
                                           color: (practiceProvider.isRecording
-                                                  ? const Color(0xFFFF453A)
-                                                  : const Color(0xFF5E5CE6))
-                                              .withOpacity(0.3),
+                                                  ? kDanger
+                                                  : kPrimary)
+                                              .withValues(alpha: 0.3),
                                           spreadRadius: 6,
                                           blurRadius: 12,
                                         ),
@@ -463,7 +497,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: const Color(0xFFE5E5EA),
+                                        color: kBorder,
                                         width: 1.5,
                                       ),
                                     ),
@@ -483,7 +517,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                           practiceProvider.userTranscript,
                                           style: const TextStyle(
                                             fontSize: 16,
-                                            color: Color(0xFF1C1C1E),
+                                            color: kTextDark,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -513,13 +547,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
                                 },
                                 icon: Icon(
                                   _isWordBankMode ? Icons.mic : Icons.grid_view,
-                                  color: const Color(0xFF5E5CE6),
+                                  color: kPrimary,
                                   size: 18,
                                 ),
                                 label: Text(
                                   _isWordBankMode ? 'Switch to Voice Mode' : 'Switch to Word Bank',
                                   style: const TextStyle(
-                                    color: Color(0xFF5E5CE6),
+                                    color: kPrimary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -550,8 +584,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE5E5EA),
+        decoration: BoxDecoration(                                  color: kBorder,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
@@ -573,10 +606,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE5E5EA), width: 1.5),
+          border: Border.all(                              color: kBorder, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -585,7 +618,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
         child: Text(
           text,
           style: const TextStyle(
-            color: Color(0xFF1C1C1E),
+            color: kTextDark,
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -610,14 +643,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(
-            top: BorderSide(color: Color(0xFFE5E5EA), width: 1.5),
+            top: BorderSide(color: kBorder, width: 1.5),
           ),
         ),
         child: ElevatedButton(
           onPressed: canCheck ? () => _checkAnswer(currentPhrase) : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF5E5CE6),
-            disabledBackgroundColor: const Color(0xFFE5E5EA),
+            backgroundColor: kPrimary,
+            disabledBackgroundColor: kBorder,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -638,79 +671,132 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
     // 2. State after checking (Success or Error notification banner)
     final bannerColor = _isCorrect
-        ? const Color(0xFF30D158).withOpacity(0.15)
-        : const Color(0xFFFF453A).withOpacity(0.15);
-    final iconColor = _isCorrect ? const Color(0xFF30D158) : const Color(0xFFFF453A);
-    final buttonColor = _isCorrect ? const Color(0xFF30D158) : const Color(0xFFFF453A);
+        ? kSuccess.withValues(alpha: 0.15)
+        : kDanger.withValues(alpha: 0.15);
+    final iconColor = _isCorrect ? kSuccess : kDanger;
+    final buttonColor = _isCorrect ? kSuccess : kDanger;
+    final grammarRule = context.read<LessonProvider>().currentGrammarRule;
 
     return Container(
       width: double.infinity,
       color: bannerColor,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                _isCorrect ? Icons.check_circle : Icons.error,
-                color: iconColor,
-                size: 28,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                _isCorrect ? 'Excellent! ($_score%)' : 'Incorrect ($_score%)',
-                style: TextStyle(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  _isCorrect ? Icons.check_circle : Icons.error,
                   color: iconColor,
+                  size: 28,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  _isCorrect ? 'Excellent! ($_score%)' : 'Incorrect ($_score%)',
+                  style: TextStyle(
+                    color: iconColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (!_isCorrect) ...[
+              Text(
+                'Correct translation:',
+                style: TextStyle(
+                  color: Colors.grey[800],
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 14,
                 ),
               ),
+              const SizedBox(height: 2),
+              Text(
+                currentPhrase.phraseLv,
+                style: const TextStyle(
+                  color: kTextDark,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 12),
             ],
-          ),
-          const SizedBox(height: 8),
-          if (!_isCorrect) ...[
-            Text(
-              'Correct translation:',
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+            // ── Grammar hint card ──────────────────────────────────
+            if (grammarRule != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: kPrimary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: kPrimary.withValues(alpha: 0.25)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.lightbulb_outline, color: kPrimary, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          grammarRule.title,
+                          style: const TextStyle(
+                            color: kPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      grammarRule.explanation,
+                      style: TextStyle(
+                        color: kTextDark.withValues(alpha: 0.85),
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      grammarRule.examples.join('  •  '),
+                      style: TextStyle(
+                        color: kTextGrey,
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            ElevatedButton(
+              onPressed: _onContinue,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: buttonColor,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'CONTINUE',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              currentPhrase.phraseLv,
-              style: const TextStyle(
-                color: Color(0xFF1C1C1E),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 12),
           ],
-          ElevatedButton(
-            onPressed: _onContinue,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: buttonColor,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 0,
-            ),
-            child: const Text(
-              'CONTINUE',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -718,7 +804,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   Widget _buildLessonComplete(int totalPhrases) {
     return Scaffold(
       body: Container(
-        color: const Color(0xFFF9FAFB),
+        color: kBackground,
         padding: const EdgeInsets.all(24),
         child: Center(
           child: Column(
@@ -727,7 +813,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               const Icon(
                 Icons.emoji_events,
                 size: 100,
-                color: Color(0xFFFFD60A),
+                color: kAccent,
               ),
               const SizedBox(height: 24),
               const Text(
@@ -735,7 +821,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1C1C1E),
+                  color: kTextDark,
                 ),
               ),
               const SizedBox(height: 12),
@@ -753,7 +839,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF5E5CE6),
+                    backgroundColor: kPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -779,7 +865,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   Widget _buildGameOver() {
     return Scaffold(
       body: Container(
-        color: const Color(0xFFF9FAFB),
+        color: kBackground,
         padding: const EdgeInsets.all(24),
         child: Center(
           child: Column(
@@ -788,7 +874,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               const Icon(
                 Icons.heart_broken,
                 size: 100,
-                color: Color(0xFFFF453A),
+                color: kDanger,
               ),
               const SizedBox(height: 24),
               const Text(
@@ -796,7 +882,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1C1C1E),
+                  color: kTextDark,
                 ),
               ),
               const SizedBox(height: 12),
@@ -819,7 +905,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     context.read<PracticeProvider>().resetPhraseIndex();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF5E5CE6),
+                    backgroundColor: kPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -843,7 +929,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   child: const Text(
                     'Exit Lesson',
                     style: TextStyle(
-                      color: Color(0xFF5E5CE6),
+                      color: kPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -867,9 +953,9 @@ class MascotWidget extends StatelessWidget {
       width: 70,
       height: 70,
       decoration: BoxDecoration(
-        color: const Color(0xFF30D158).withOpacity(0.15),
+        color: kSuccess.withValues(alpha: 0.15),
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFF30D158), width: 1.5),
+        border: Border.all(color: kSuccess, width: 1.5),
       ),
       child: Center(
         child: Stack(
@@ -880,7 +966,7 @@ class MascotWidget extends StatelessWidget {
               width: 40,
               height: 44,
               decoration: BoxDecoration(
-                color: const Color(0xFF5E5CE6),
+                color: kPrimary,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -927,7 +1013,7 @@ class MascotWidget extends StatelessWidget {
               top: 22,
               child: CustomPaint(
                 size: const Size(6, 4),
-                painter: TrianglePainter(color: const Color(0xFFFFD60A)),
+                painter: TrianglePainter(color: kAccent),
               ),
             ),
           ],
@@ -982,11 +1068,11 @@ class SpeechBubblePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.03)
+      ..color = Colors.black.withValues(alpha: 0.03)
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()
-      ..color = const Color(0xFFE5E5EA)
+      ..color = kBorder
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

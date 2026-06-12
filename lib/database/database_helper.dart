@@ -24,13 +24,13 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 4,
       onCreate: _createDB,
+      onUpgrade: _onUpgrade,
     );
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // Create tables
     await db.execute('''
       CREATE TABLE lessons (
         id INTEGER PRIMARY KEY,
@@ -77,8 +77,112 @@ class DatabaseHelper {
       )
     ''');
 
-    // Seed data
+    await db.execute('''
+      CREATE TABLE grammar_rules (
+        id INTEGER PRIMARY KEY,
+        lessonId INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        explanation TEXT NOT NULL,
+        examples TEXT NOT NULL,
+        category TEXT NOT NULL,
+        FOREIGN KEY (lessonId) REFERENCES lessons (id)
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE listening_exercises (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        textLv TEXT NOT NULL,
+        textEn TEXT NOT NULL,
+        topic TEXT NOT NULL,
+        questions TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE reading_passages (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        textLv TEXT NOT NULL,
+        textEn TEXT NOT NULL,
+        topic TEXT NOT NULL,
+        vocabulary TEXT NOT NULL,
+        questions TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE writing_prompts (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        promptEn TEXT NOT NULL,
+        promptLv TEXT NOT NULL,
+        topic TEXT NOT NULL,
+        vocabulary TEXT NOT NULL,
+        modelAnswer TEXT NOT NULL
+      )
+    ''');
+
     await seedDatabase(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // grammar_rules was part of the original schema but missing from upgrades.
+    // Table creation is defensive — data already exists from _createDB at v1.
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS grammar_rules (
+          id INTEGER PRIMARY KEY,
+          lessonId INTEGER NOT NULL,
+          title TEXT NOT NULL,
+          explanation TEXT NOT NULL,
+          examples TEXT NOT NULL,
+          category TEXT NOT NULL,
+          FOREIGN KEY (lessonId) REFERENCES lessons (id)
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS listening_exercises (
+          id INTEGER PRIMARY KEY,
+          title TEXT NOT NULL,
+          textLv TEXT NOT NULL,
+          textEn TEXT NOT NULL,
+          topic TEXT NOT NULL,
+          questions TEXT NOT NULL
+        )
+      ''');
+      await seedListeningExercises(db);
+    }
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS reading_passages (
+          id INTEGER PRIMARY KEY,
+          title TEXT NOT NULL,
+          textLv TEXT NOT NULL,
+          textEn TEXT NOT NULL,
+          topic TEXT NOT NULL,
+          vocabulary TEXT NOT NULL,
+          questions TEXT NOT NULL
+        )
+      ''');
+      await seedReadingPassages(db);
+    }
+    if (oldVersion < 4) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS writing_prompts (
+          id INTEGER PRIMARY KEY,
+          title TEXT NOT NULL,
+          promptEn TEXT NOT NULL,
+          promptLv TEXT NOT NULL,
+          topic TEXT NOT NULL,
+          vocabulary TEXT NOT NULL,
+          modelAnswer TEXT NOT NULL
+        )
+      ''');
+      await seedWritingPrompts(db);
+    }
   }
 
   Future<int> insertLesson(Map<String, dynamic> lesson) async {
@@ -158,5 +262,66 @@ class DatabaseHelper {
       return (result.first['avg'] as num).toDouble();
     }
     return 0.0;
+  }
+
+  // ── Grammar rules ────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>?> getGrammarRuleForLesson(int lessonId) async {
+    final db = await database;
+    final result = await db.query(
+      'grammar_rules',
+      where: 'lessonId = ?',
+      whereArgs: [lessonId],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  // ── Listening exercises ─────────────────────────────────────────
+
+  Future<List<Map<String, dynamic>>> getAllListeningExercises() async {
+    final db = await database;
+    return await db.query('listening_exercises');
+  }
+
+  Future<Map<String, dynamic>?> getListeningExerciseById(int id) async {
+    final db = await database;
+    final result = await db.query('listening_exercises', where: 'id = ?', whereArgs: [id]);
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> getListeningExercisesByTopic(String topic) async {
+    final db = await database;
+    return await db.query('listening_exercises', where: 'topic = ?', whereArgs: [topic]);
+  }
+
+  // ── Reading passages ───────────────────────────────────────────
+
+  Future<List<Map<String, dynamic>>> getAllReadingPassages() async {
+    final db = await database;
+    return await db.query('reading_passages');
+  }
+
+  Future<Map<String, dynamic>?> getReadingPassageById(int id) async {
+    final db = await database;
+    final result = await db.query('reading_passages', where: 'id = ?', whereArgs: [id]);
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> getReadingPassagesByTopic(String topic) async {
+    final db = await database;
+    return await db.query('reading_passages', where: 'topic = ?', whereArgs: [topic]);
+  }
+
+  // ── Writing prompts ─────────────────────────────────────────────
+
+  Future<List<Map<String, dynamic>>> getAllWritingPrompts() async {
+    final db = await database;
+    return await db.query('writing_prompts');
+  }
+
+  Future<Map<String, dynamic>?> getWritingPromptById(int id) async {
+    final db = await database;
+    final result = await db.query('writing_prompts', where: 'id = ?', whereArgs: [id]);
+    return result.isNotEmpty ? result.first : null;
   }
 }

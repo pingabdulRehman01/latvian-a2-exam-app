@@ -6,6 +6,9 @@ import '../services/progress_service.dart';
 import '../app_theme.dart';
 import 'lesson_list_screen.dart';
 import 'mistake_review_screen.dart';
+import 'listening_screen.dart';
+import 'reading_screen.dart';
+import 'writing_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -227,6 +230,54 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               const SizedBox(height: 14),
+
+              // ── Writing Practice button ──────────────────
+              _buildActionCard(
+                title: 'Writing Practice',
+                subtitle: 'Compose Latvian texts from prompts',
+                icon: Icons.edit_note_rounded,
+                iconBg: kPrimary,
+                arrowColor: kPrimary,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const WritingScreen()),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // ── Reading Practice button ──────────────────
+              _buildActionCard(
+                title: 'Reading Practice',
+                subtitle: 'Comprehension passages with vocabulary',
+                icon: Icons.menu_book_rounded,
+                iconBg: kAccent,
+                arrowColor: kAccent,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const ReadingScreen()),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // ── Listening Practice button ─────────────────
+              _buildActionCard(
+                title: 'Listening Practice',
+                subtitle: 'Comprehension exercises with audio',
+                icon: Icons.headphones_rounded,
+                iconBg: kSuccess,
+                arrowColor: kSuccess,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const ListeningScreen()),
+                ),
+              ),
+
+              const SizedBox(height: 12),
 
               // ── Start Practice button ─────────────────────
               _buildActionCard(

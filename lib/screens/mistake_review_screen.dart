@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/phrase.dart';
 import '../providers/mistake_provider.dart';
+import '../app_theme.dart';
 import 'practice_screen.dart';
-import 'home_screen.dart'
-    show kPrimary, kDanger, kBackground, kCard, kBorder, kTextDark, kTextGrey, kAccent;
 
 class MistakeReviewScreen extends StatefulWidget {
   const MistakeReviewScreen({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
-import '../models/attempt.dart';
 import '../services/scoring_service.dart';
 
 class PracticeProvider extends ChangeNotifier {
@@ -87,7 +86,7 @@ class PracticeProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print('Error submitting attempt: $e');
+      debugPrint('Error submitting attempt: $e');
     }
   }
 }

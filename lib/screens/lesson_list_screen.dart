@@ -37,6 +37,36 @@ class _LessonListScreenState extends State<LessonListScreen> {
       ),
       body: Consumer<LessonProvider>(
         builder: (context, lessonProvider, _) {
+          if (lessonProvider.errorMessage != null && lessonProvider.lessons.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline_rounded, color: kDanger, size: 56),
+                    const SizedBox(height: 16),
+                    Text(
+                      lessonProvider.errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: kTextDark, fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () => lessonProvider.loadLessons(),
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      label: const Text('RETRY', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
           if (lessonProvider.lessons.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(

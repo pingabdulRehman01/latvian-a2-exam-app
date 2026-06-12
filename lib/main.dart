@@ -7,6 +7,9 @@ import 'database/db_factory.dart';
 import 'providers/lesson_provider.dart';
 import 'providers/practice_provider.dart';
 import 'providers/mistake_provider.dart';
+import 'providers/listening_provider.dart';
+import 'providers/reading_provider.dart';
+import 'providers/writing_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
@@ -44,6 +47,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LessonProvider()),
         ChangeNotifierProvider(create: (_) => PracticeProvider()),
         ChangeNotifierProvider(create: (_) => MistakeProvider()),
+        ChangeNotifierProvider(create: (_) => ListeningProvider()),
+        ChangeNotifierProvider(create: (_) => ReadingProvider()),
+        ChangeNotifierProvider(create: (_) => WritingProvider()),
       ],
       child: MaterialApp(
         title: 'Latvian A2',
