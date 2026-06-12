@@ -1,0 +1,31 @@
+name: latvian_a2_exam
+description: A Flutter app for Latvian A2 exam practice with speech-to-text evaluation.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  provider: ^6.0.0
+  sqflite: ^2.3.0
+  sqflite_common_ffi_web: ^1.1.2
+  path_provider: ^2.1.0
+  path: ^1.9.0
+  speech_to_text: ^7.4.0
+  permission_handler: ^12.0.3
+  intl: ^0.20.2
+  flutter_tts: ^4.2.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
